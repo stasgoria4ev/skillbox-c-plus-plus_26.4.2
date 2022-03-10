@@ -1,12 +1,12 @@
 #include <iostream>
 #include <string>
-#include <map>
+#include <vector>
 
 class PhoneNumberAddressBookEntry 
 { 
     std::string phoneNumber;//номер телефона
 
-    bool CorrectInputNumber(std::string& number) { //то, что пользователю видеть не нужно?
+    bool CorrectInputNumber(std::string& number) { 
         bool good = true;
         if (number.length() == 10) {
             for (int i = 0; i < 10 && good; i++) 
@@ -47,10 +47,16 @@ public:
     }
 };
 
+class Contact {
+public:
+    PhoneNumberAddressBookEntry numberAddrBook;
+    NameAddressBookEntry contactName;
+};
+
 class Phone
 {
 private:
-    std::map<std::string, std::string> phonebook;//адресная книга
+    std::vector<Contact> phonebook;//адресная книга
 public:
     void CorrectInputCommand(std::string& command) { 
         do {
@@ -63,15 +69,15 @@ public:
 
     void Add() {
             bool good;
-            PhoneNumberAddressBookEntry* numberAddrBook = new PhoneNumberAddressBookEntry();
+            Contact* addressBookContact = new Contact(); 
             do { 
                 std::cout << "Enter phone number(10 numbers): +7";
                 std::string* strNumber = new std::string;
                 std::cin >> *strNumber;
-                numberAddrBook->setCorrectInputNumber(*strNumber);
-                good = numberAddrBook->getCorrectInputNumber(*strNumber);
+                addressBookContact->numberAddrBook.setCorrectInputNumber(*strNumber);
+                good = addressBookContact->numberAddrBook.getCorrectInputNumber(*strNumber);
                 if (good) {
-                    numberAddrBook->setPhoneNumber(*strNumber);
+                    addressBookContact->numberAddrBook.setPhoneNumber(*strNumber);
                     delete strNumber; strNumber = nullptr;
                 } else {
                     std::cout << "Invalid phone number, please try again.\n";
@@ -79,14 +85,12 @@ public:
             } while (!good);
 
             std::cout << "Enter Contact Name: ";
-            NameAddressBookEntry* contactName = new NameAddressBookEntry(); 
             std::string* strtName = new std::string; 
             std::cin >> *strtName;
-            contactName->setName(*strtName);
+            addressBookContact->contactName.setName(*strtName);
             delete strtName; strtName = nullptr;
-            phonebook.insert(std::pair<std::string, std::string>(numberAddrBook->getPhoneNumber(), contactName->getName()));
-            delete numberAddrBook; numberAddrBook = nullptr;
-            delete contactName; contactName = nullptr;
+            phonebook.push_back(*addressBookContact);//наполнение вектора
+            delete addressBookContact; addressBookContact = nullptr;
     }
 
     void Call() {
@@ -98,9 +102,9 @@ public:
             std::string choice;
             std::cin >> choice;
             bool found = false;
-            for (std::map<std::string, std::string>::iterator it = phonebook.begin(); it != phonebook.end(); ++it)
-                if (it->second == choice || it->first == choice) {
-                    std::cout << "CALL " << it->first << '\n';
+            for (int i = 0; i < phonebook.size(); i++)
+                if (phonebook[i].numberAddrBook.getPhoneNumber() == choice || phonebook[i].contactName.getName() == choice) {    
+                    std::cout << "CALL " << phonebook[i].numberAddrBook.getPhoneNumber() << '\n';
                     found = true;
                 }
             if (!found) std::cout << "No such contact." << '\n';
@@ -116,8 +120,8 @@ public:
             std::string choice;
             std::cin >> choice;
             bool found = false;
-            for (std::map<std::string, std::string>::iterator it = phonebook.begin(); it != phonebook.end(); ++it)
-                if (it->second == choice || it->first == choice) {
+            for (int i = 0; i < phonebook.size(); i++)
+                if (phonebook[i].numberAddrBook.getPhoneNumber() == choice || phonebook[i].contactName.getName() == choice) {
                     std::cout << "Enter your message\n";
                     std::cout << ":";
                     std::string message;
