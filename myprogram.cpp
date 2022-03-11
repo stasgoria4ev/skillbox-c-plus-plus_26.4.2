@@ -25,10 +25,6 @@ public:
         return phoneNumber;
     }
 
-    void setCorrectInputNumber(std::string& number) { 
-        CorrectInputNumber(number);
-    }
-
     bool getCorrectInputNumber(std::string& number) {
         return CorrectInputNumber(number);
     }
@@ -48,9 +44,25 @@ public:
 };
 
 class Contact {
-public:
+private:
     PhoneNumberAddressBookEntry numberAddrBook;
     NameAddressBookEntry contactName;
+public:
+    void setNumberAddrBook(std::string& strNumber) { 
+        numberAddrBook.setPhoneNumber(strNumber);
+    }
+    
+    PhoneNumberAddressBookEntry getNumberAddrBook() {
+        return numberAddrBook;
+    }
+    
+    void setContactName(std::string& strNumber) { 
+        contactName.setName(strNumber);
+    }
+
+    NameAddressBookEntry getContactName() {
+        return contactName;
+    }
 };
 
 class Phone
@@ -74,10 +86,9 @@ public:
                 std::cout << "Enter phone number(10 numbers): +7";
                 std::string* strNumber = new std::string;
                 std::cin >> *strNumber;
-                addressBookContact->numberAddrBook.setCorrectInputNumber(*strNumber);
-                good = addressBookContact->numberAddrBook.getCorrectInputNumber(*strNumber);
+                good = addressBookContact->getNumberAddrBook().getCorrectInputNumber(*strNumber);
                 if (good) {
-                    addressBookContact->numberAddrBook.setPhoneNumber(*strNumber);
+                    addressBookContact->setNumberAddrBook(*strNumber);
                     delete strNumber; strNumber = nullptr;
                 } else {
                     std::cout << "Invalid phone number, please try again.\n";
@@ -87,7 +98,7 @@ public:
             std::cout << "Enter Contact Name: ";
             std::string* strtName = new std::string; 
             std::cin >> *strtName;
-            addressBookContact->contactName.setName(*strtName);
+            addressBookContact->setContactName(*strtName);
             delete strtName; strtName = nullptr;
             phonebook.push_back(*addressBookContact);//наполнение вектора
             delete addressBookContact; addressBookContact = nullptr;
@@ -103,8 +114,8 @@ public:
             std::cin >> choice;
             bool found = false;
             for (int i = 0; i < phonebook.size(); i++)
-                if (phonebook[i].numberAddrBook.getPhoneNumber() == choice || phonebook[i].contactName.getName() == choice) {    
-                    std::cout << "CALL " << phonebook[i].numberAddrBook.getPhoneNumber() << '\n';
+                if (phonebook[i].getNumberAddrBook().getPhoneNumber() == choice || phonebook[i].getContactName().getName() == choice) {    
+                    std::cout << "CALL " << phonebook[i].getNumberAddrBook().getPhoneNumber() << '\n';
                     found = true;
                 }
             if (!found) std::cout << "No such contact." << '\n';
@@ -121,7 +132,7 @@ public:
             std::cin >> choice;
             bool found = false;
             for (int i = 0; i < phonebook.size(); i++)
-                if (phonebook[i].numberAddrBook.getPhoneNumber() == choice || phonebook[i].contactName.getName() == choice) {
+                if (phonebook[i].getNumberAddrBook().getPhoneNumber() == choice || phonebook[i].getContactName().getName() == choice) {
                     std::cout << "Enter your message\n";
                     std::cout << ":";
                     std::string message;
